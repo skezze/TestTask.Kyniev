@@ -1,7 +1,10 @@
-﻿using System.Net.Http.Json;
-using Chat.Api;
+﻿using Chat.Api;
+using Chat.Domain.DTOs.CRUDDTO;
 using Chat.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace Chat.Tests
 {
@@ -40,17 +43,41 @@ namespace Chat.Tests
         }
 
         [TestMethod]
-        public async Task DeleteConversation_ReturnsNoContent()
+        public async Task DeleteChatRoom_ReturnsNoContent()
         {
-            var chatRoom = new ChatRoom { Name = "Test Chat", CreatedBy = "User1" };
-            var postResponse = await _client.PostAsJsonAsync("/api/ChatRooms/CreateChatRoom", chatRoom);
+            // Arrange
+            var chatRoom = new { Name = "Test Chat", CreatedBy = "User1" };
+            var postResponse = await _client.PostAsync("/api/ChatRooms/CreateChatRoom",
+                new StringContent(JsonSerializer.Serialize(chatRoom), Encoding.UTF8, "application/json"));
             postResponse.EnsureSuccessStatusCode();
 
             var createdChatRoom = await postResponse.Content.ReadFromJsonAsync<ChatRoom>();
-            var deleteResponse = await _client.DeleteAsync($"/api/ChatRooms/DeleteChatRoom{createdChatRoom.ChatRoomId}");
 
+            // Act
+            var deleteResponse = await _client.DeleteAsync($"/api/ChatRooms/DeleteChatRoom/{createdChatRoom.ChatRoomId}/{createdChatRoom.CreatedBy}");
+
+            // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task DeleteChatRoom_ReturnsUnauthorized_WhenUserHasNoPermission()
+        {
+            // Arrange
+            var chatRoom = new { Name = "Test Chat", CreatedBy = "User1" };
+            var postResponse = await _client.PostAsync("/api/ChatRooms/CreateChatRoom",
+                new StringContent(JsonSerializer.Serialize(chatRoom), Encoding.UTF8, "application/json"));
+            postResponse.EnsureSuccessStatusCode();
+
+            var createdChatRoom = await postResponse.Content.ReadFromJsonAsync<ChatRoom>();
+
+            // Act
+            var deleteResponse = await _client.DeleteAsync($"/api/ChatRooms/DeleteChatRoom/{createdChatRoom.ChatRoomId}/AnotherUser");
+
+            // Assert
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, deleteResponse.StatusCode);
         }
     }
 }
+
 

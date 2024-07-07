@@ -44,11 +44,11 @@ namespace Chat.Api.Controllers
             return CreatedAtAction(nameof(GetChatRoom), new { id = createdChatRoom.ChatRoomId }, createdChatRoom);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteChatRoom(int id, [FromBody] string userId)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteChatRoom(int id, string userId)
         {
             var result = await _chatRoomRepository.DeleteChatRoomAsync(id, userId);
-            if (!result) return Forbid("You do not have permission to delete this chat room");
+            if (!result) return Unauthorized("You do not have permission to delete this chat room");
             return NoContent();
         }
     }

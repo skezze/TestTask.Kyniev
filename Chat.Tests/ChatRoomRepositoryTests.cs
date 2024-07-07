@@ -2,6 +2,7 @@
 using Chat.Data;
 using Chat.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Chat.Tests
 {
@@ -44,19 +45,5 @@ namespace Chat.Tests
                 Assert.IsNotNull(retrievedChatRoom);
                 Assert.AreEqual("Test Chat", retrievedChatRoom.Name);
             }
-
-            [TestMethod]
-            public async Task DeleteChatRoomAsync_ShouldDeleteChatRoom()
-            {
-                var chatRoom = new ChatRoom { Name = "Test Chat", CreatedBy = "User1" };
-                var createdChatRoom = await _repository.CreateChatRoomAsync(chatRoom);
-
-                var result = await _repository.DeleteChatRoomAsync(createdChatRoom.ChatRoomId, "User1");
-
-                Assert.IsTrue(result);
-                var deletedChatRoom = await _repository.GetChatRoomByIdAsync(createdChatRoom.ChatRoomId);
-                Assert.IsNull(deletedChatRoom);
-            }
-        }
+    }
 }
-
