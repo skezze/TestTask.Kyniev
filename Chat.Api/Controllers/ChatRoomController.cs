@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Chat.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class ChatRoomsController : ControllerBase
     {
         private readonly IChatRoomRepository _chatRoomRepository;
