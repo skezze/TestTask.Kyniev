@@ -1,6 +1,6 @@
 ﻿using Chat.Domain.Models;
 
-namespace Chat.Common.Repositories.Interfaces
+namespace Chat.Application.Repositories.Interfaces
 {
     public interface IChatRoomRepository
     {

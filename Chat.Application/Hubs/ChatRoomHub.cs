@@ -1,4 +1,4 @@
-﻿using Chat.Common.Repositories.Interfaces;
+﻿using Chat.Application.Repositories.Interfaces;
 using Chat.Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 
