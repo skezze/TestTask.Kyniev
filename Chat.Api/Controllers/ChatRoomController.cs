@@ -1,4 +1,5 @@
 ﻿using Chat.Application.Repositories.Interfaces;
+using Chat.Domain.DTOs.CRUDDTO;
 using Chat.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,9 +32,15 @@ namespace Chat.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateChatRoom([FromBody] ChatRoom chatRoom)
+        public async Task<IActionResult> CreateChatRoom([FromBody] CreateChatRoomDto createChatRoomDto)
         {
-            var createdChatRoom = await _chatRoomRepository.CreateChatRoomAsync(chatRoom);
+
+            var createdChatRoom = await _chatRoomRepository.CreateChatRoomAsync(new ChatRoom
+            {
+                Name = createChatRoomDto.Name,
+                CreatedBy = createChatRoomDto.CreatedBy,
+                Messages = new List<Message>()
+            });
             return CreatedAtAction(nameof(GetChatRoom), new { id = createdChatRoom.ChatRoomId }, createdChatRoom);
         }
 

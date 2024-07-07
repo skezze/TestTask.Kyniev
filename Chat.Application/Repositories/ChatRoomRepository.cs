@@ -3,7 +3,6 @@ using Chat.Data;
 using Chat.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Chat.Application.Repositories
 {
     public class ChatRoomRepository : IChatRoomRepository
