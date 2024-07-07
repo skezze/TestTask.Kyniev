@@ -1,10 +1,10 @@
-﻿using Chat.Common.Repositories.Interfaces;
+﻿using Chat.Application.Repositories.Interfaces;
 using Chat.Data;
 using Chat.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Chat.Common.Services
+namespace Chat.Application.Repositories
 {
     public class ChatRoomRepository : IChatRoomRepository
     {

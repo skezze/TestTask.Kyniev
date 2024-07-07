@@ -1,6 +1,6 @@
 using Chat.Application.Hubs;
-using Chat.Common.Repositories.Interfaces;
-using Chat.Common.Services;
+using Chat.Application.Repositories;
+using Chat.Application.Repositories.Interfaces;
 using Chat.Data;
 using Microsoft.EntityFrameworkCore;
 
