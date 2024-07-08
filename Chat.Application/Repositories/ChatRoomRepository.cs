@@ -17,27 +17,37 @@ namespace Chat.Application.Repositories
 
         public async Task<ChatRoom> GetChatRoomByIdAsync(int id)
         {
-            return await _context.Chats.Include(c => c.Messages).FirstOrDefaultAsync(c => c.ChatRoomId == id);
+            return await _context.ChatRooms
+                .Include(c => c.Messages)
+                .FirstOrDefaultAsync(c => c.ChatRoomId == id);
+        }
+
+        public async Task<IEnumerable<ChatRoom>> SearchChatRoomsAsync(string searchTerm)
+        {
+            return await _context.ChatRooms
+                .Where(c => c.Name.Contains(searchTerm))
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<ChatRoom>> GetChatRoomsAsync()
         {
-            return await _context.Chats.Include(c => c.Messages).ToListAsync();
+            return await _context.ChatRooms
+                .ToListAsync();
         }
 
         public async Task<ChatRoom> CreateChatRoomAsync(ChatRoom chatRoom)
         {
-            await _context.Chats.AddAsync(chatRoom);
+            await _context.ChatRooms.AddAsync(chatRoom);
             await _context.SaveChangesAsync();
             return chatRoom;
         }
 
         public async Task<bool> DeleteChatRoomAsync(int id, string userId)
         {
-            var chat = await _context.Chats.FindAsync(id);
+            var chat = await _context.ChatRooms.FindAsync(id);
             if (chat == null || chat.CreatedBy != userId) return false;
 
-            _context.Chats.Remove(chat);
+            _context.ChatRooms.Remove(chat);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -56,18 +66,23 @@ namespace Chat.Application.Repositories
             };
 
             chatRoom.Messages.Add(newMessage);
-            await CreateChatRoomAsync(chatRoom);
-            await clients.Group(chatRoomId.ToString()).SendAsync("ReceiveMessage", newMessage);
+            await _context.SaveChangesAsync();
+            await clients.Group(chatRoomId.ToString())
+                .SendAsync("ReceiveMessage", newMessage);
         }
 
-        public async Task JoinChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context)
+        public async Task JoinChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context, IHubCallerClients clients)
         {
             await groups.AddToGroupAsync(context.ConnectionId, chatRoomId.ToString());
+            await clients.Group(chatRoomId.ToString())
+                .SendAsync("UserJoined", context.ConnectionId);
         }
 
-        public async Task LeaveChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context)
+        public async Task LeaveChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context, IHubCallerClients clients)
         {
             await groups.RemoveFromGroupAsync(context.ConnectionId, chatRoomId.ToString());
+            await clients.Group(chatRoomId.ToString())
+                .SendAsync("UserLeft", context.ConnectionId);
         }
     }
 }

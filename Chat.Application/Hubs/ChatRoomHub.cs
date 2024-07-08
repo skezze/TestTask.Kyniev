@@ -20,12 +20,12 @@ namespace Chat.Application.Hubs
 
         public async Task JoinChatRoom(int chatRoomId)
         {
-            await _chatRoomRepository.JoinChatRoomAsync(chatRoomId, this.Groups, this.Context);
+            await _chatRoomRepository.JoinChatRoomAsync(chatRoomId, this.Groups, this.Context, this.Clients);
         }
 
         public async Task LeaveChatRoom(int chatRoomId)
         {
-            await _chatRoomRepository.LeaveChatRoomAsync(chatRoomId, this.Groups, this.Context);
+            await _chatRoomRepository.LeaveChatRoomAsync(chatRoomId, this.Groups, this.Context, this.Clients);
         }
     }
 

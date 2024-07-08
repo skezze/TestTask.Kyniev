@@ -22,6 +22,13 @@ namespace Chat.Api.Controllers
             var chatRooms = await _chatRoomRepository.GetChatRoomsAsync();
             return Ok(chatRooms);
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> SearchChatRooms([FromQuery] string searchTerm)
+        {
+            var chatRooms = await _chatRoomRepository.SearchChatRoomsAsync(searchTerm);
+            return Ok(chatRooms);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetChatRoom(int id)

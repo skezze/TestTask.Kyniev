@@ -77,6 +77,24 @@ namespace Chat.Tests
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, deleteResponse.StatusCode);
         }
+        
+        [TestMethod]
+        public async Task SearchChatRooms_ReturnsOk()
+        {
+            var chatRoom1 = new ChatRoom { Name = "Test Chat 1", CreatedBy = "User1" };
+            var chatRoom2 = new ChatRoom { Name = "Another Chat", CreatedBy = "User2" };
+
+            await _client.PostAsJsonAsync("/api/ChatRooms/CreateChatRoom", chatRoom1);
+            await _client.PostAsJsonAsync("/api/ChatRooms/CreateChatRoom", chatRoom2);
+
+            var response = await _client.GetAsync("/api/ChatRooms/SearchChatRooms?searchTerm=Test");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(content);
+            Assert.IsTrue(content.Contains("Test Chat 1"));
+            Assert.IsFalse(content.Contains("Another Chat"));
+        }
     }
 }
 
