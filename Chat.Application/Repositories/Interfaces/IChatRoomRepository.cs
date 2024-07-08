@@ -8,5 +8,6 @@ namespace Chat.Application.Repositories.Interfaces
         Task<IEnumerable<ChatRoom>> GetChatRoomsAsync();
         Task<ChatRoom> CreateChatRoomAsync(ChatRoom chat);
         Task<bool> DeleteChatRoomAsync(int id, string userId);
+        Task AddMessageAsync(Message message);
     }
 }

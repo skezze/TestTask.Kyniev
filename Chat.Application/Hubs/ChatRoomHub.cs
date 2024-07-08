@@ -1,10 +1,11 @@
-﻿using Chat.Application.Repositories.Interfaces;
+﻿using Chat.Application.Hubs.Interfaces;
+using Chat.Application.Repositories.Interfaces;
 using Chat.Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Application.Hubs
 {
-    public class ChatRoomHub : Hub
+    public class ChatRoomHub : Hub,IChatRoomHub
     {
         private readonly IChatRoomRepository _chatRoomRepository;
 
@@ -31,12 +32,12 @@ namespace Chat.Application.Hubs
             await Clients.Group(chatRoomId.ToString()).SendAsync("ReceiveMessage", newMessage);
         }
 
-        public async Task JoinConversation(int chatRoomId)
+        public async Task JoinChatRoom(int chatRoomId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, chatRoomId.ToString());
         }
 
-        public async Task LeaveConversation(int chatRoomId)
+        public async Task LeaveChatRoom(int chatRoomId)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatRoomId.ToString());
         }
