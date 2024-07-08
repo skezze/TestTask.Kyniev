@@ -1,4 +1,5 @@
 ﻿using Chat.Domain.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Application.Repositories.Interfaces
 {
@@ -8,6 +9,8 @@ namespace Chat.Application.Repositories.Interfaces
         Task<IEnumerable<ChatRoom>> GetChatRoomsAsync();
         Task<ChatRoom> CreateChatRoomAsync(ChatRoom chat);
         Task<bool> DeleteChatRoomAsync(int id, string userId);
-        Task AddMessageAsync(Message message);
+        Task SendMessageAsync(int chatRoomId, string userId, string message,  IHubCallerClients clients);
+        Task JoinChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context);
+        Task LeaveChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context);
     }
 }

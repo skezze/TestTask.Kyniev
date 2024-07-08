@@ -1,6 +1,5 @@
 ﻿using Chat.Application.Hubs.Interfaces;
 using Chat.Application.Repositories.Interfaces;
-using Chat.Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Application.Hubs
@@ -16,30 +15,17 @@ namespace Chat.Application.Hubs
 
         public async Task SendMessage(int chatRoomId, string userId, string message)
         {
-            var chatRoom = await _chatRoomRepository.GetChatRoomByIdAsync(chatRoomId);
-            if (chatRoom == null) throw new HubException("ChatRoom not found");
-
-            var newMessage = new Message
-            {
-                ChatRoomId = chatRoomId,
-                UserId = userId,
-                Text = message,
-                Timestamp = DateTime.UtcNow
-            };
-
-            chatRoom.Messages.Add(newMessage);
-            await _chatRoomRepository.CreateChatRoomAsync(chatRoom);
-            await Clients.Group(chatRoomId.ToString()).SendAsync("ReceiveMessage", newMessage);
+            await _chatRoomRepository.SendMessageAsync(chatRoomId, userId, message, this.Clients);
         }
 
         public async Task JoinChatRoom(int chatRoomId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, chatRoomId.ToString());
+            await _chatRoomRepository.JoinChatRoomAsync(chatRoomId, this.Groups, this.Context);
         }
 
         public async Task LeaveChatRoom(int chatRoomId)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatRoomId.ToString());
+            await _chatRoomRepository.LeaveChatRoomAsync(chatRoomId, this.Groups, this.Context);
         }
     }
 

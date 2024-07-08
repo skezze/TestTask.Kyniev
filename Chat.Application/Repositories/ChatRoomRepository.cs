@@ -1,6 +1,7 @@
 ﻿using Chat.Application.Repositories.Interfaces;
 using Chat.Data;
 using Chat.Domain.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chat.Application.Repositories
@@ -40,10 +41,33 @@ namespace Chat.Application.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task AddMessageAsync(Message message)
+
+        public async Task SendMessageAsync(int chatRoomId, string userId, string message, IHubCallerClients clients )
         {
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
+            var chatRoom = await GetChatRoomByIdAsync(chatRoomId);
+            if (chatRoom == null) throw new HubException("ChatRoom not found");
+
+            var newMessage = new Message
+            {
+                ChatRoomId = chatRoomId,
+                UserId = userId,
+                Text = message,
+                Timestamp = DateTime.UtcNow
+            };
+
+            chatRoom.Messages.Add(newMessage);
+            await CreateChatRoomAsync(chatRoom);
+            await clients.Group(chatRoomId.ToString()).SendAsync("ReceiveMessage", newMessage);
+        }
+
+        public async Task JoinChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context)
+        {
+            await groups.AddToGroupAsync(context.ConnectionId, chatRoomId.ToString());
+        }
+
+        public async Task LeaveChatRoomAsync(int chatRoomId, IGroupManager groups, HubCallerContext context)
+        {
+            await groups.RemoveFromGroupAsync(context.ConnectionId, chatRoomId.ToString());
         }
     }
 }
