@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chat.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class addedfullfluentconfiguration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Chats",
+                name: "ChatRooms",
                 columns: table => new
                 {
                     ChatRoomId = table.Column<int>(type: "int", nullable: false)
@@ -22,7 +22,7 @@ namespace Chat.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chats", x => x.ChatRoomId);
+                    table.PrimaryKey("PK_ChatRooms", x => x.ChatRoomId);
                 });
 
             migrationBuilder.CreateTable(
@@ -31,8 +31,8 @@ namespace Chat.Data.Migrations
                 {
                     MessageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ChatRoomId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChatRoomId = table.Column<int>(type: "int", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -40,9 +40,9 @@ namespace Chat.Data.Migrations
                 {
                     table.PrimaryKey("PK_Messages", x => x.MessageId);
                     table.ForeignKey(
-                        name: "FK_Messages_Chats_ChatRoomId",
+                        name: "FK_Messages_ChatRooms_ChatRoomId",
                         column: x => x.ChatRoomId,
-                        principalTable: "Chats",
+                        principalTable: "ChatRooms",
                         principalColumn: "ChatRoomId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -60,7 +60,7 @@ namespace Chat.Data.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Chats");
+                name: "ChatRooms");
         }
     }
 }

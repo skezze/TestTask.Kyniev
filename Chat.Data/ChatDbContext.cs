@@ -15,7 +15,11 @@ namespace Chat.Data
             modelBuilder.Entity<ChatRoom>()
                 .HasMany(c => c.Messages)
                 .WithOne(m => m.ChatRoom)
-                .HasForeignKey(m => m.ChatRoomId);
+                .HasForeignKey(m => m.MessageId);
+            modelBuilder.Entity<Message>()
+                .HasOne(c => c.ChatRoom)
+                .WithMany(m => m.Messages)
+                .HasForeignKey(k => k.ChatRoomId);
         }
     }
 }

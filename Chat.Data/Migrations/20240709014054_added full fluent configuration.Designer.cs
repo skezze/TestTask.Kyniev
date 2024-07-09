@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Data.Migrations
 {
     [DbContext(typeof(ChatDbContext))]
-    [Migration("20240708141344_rename_chat_to_chatroom")]
-    partial class rename_chat_to_chatroom
+    [Migration("20240709014054_added full fluent configuration")]
+    partial class addedfullfluentconfiguration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
